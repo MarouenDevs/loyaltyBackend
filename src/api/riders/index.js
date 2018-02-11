@@ -3,18 +3,17 @@
 const express = require('express');
 const wrap = require('co-express');
 
-const controller = require('./hello.controller');
+const controller = require('./riders.controller');
 
 const router = express.Router();
 
 /**
- * @api {get} /hello/:name/:id get welcome message
- * @apiGroup Hello
+ * @api {get} /riders get all riders
+ * @apiGroup Riders
  *
- * @apiDescription get welcome message
+ * @apiDescription get riders data
  *
- * @apiParam {String} name the name of a user
- * @apiParam {String} id some identifier
+ *
  *
  * @apiSuccess {String} welcome message
  *
@@ -31,6 +30,6 @@ const router = express.Router();
  *     }
  *
  */
-router.get('/:name/:id', wrap(controller.getWelcomeMessage));
+router.get('', wrap(controller.getRiders));
 
 module.exports = router;

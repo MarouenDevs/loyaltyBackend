@@ -78,12 +78,12 @@ const updateRider = (rider, playload, action) => {
 
 }
 
-const initRider = (payload,rider_id) => {
+const initRider = (payload, rider_id) => {
 
     const rider = {
         name: (payload.name ? payload.name : ''),
-        rider_id:rider_id,
-        phonenumber: (payload.phone_number? payload.phone_number:''),
+        rider_id: rider_id,
+        phonenumber: (payload.phone_number ? payload.phone_number : ''),
         state: 'bronze',
         nbRides: 1,
         payed: (payload.amount ? payload.amount : 0),
@@ -92,6 +92,8 @@ const initRider = (payload,rider_id) => {
     }
     return rider;
 }
+
+const dbRiders = require('../config/dbStore').dbRiders;
 
 class Process {
 
@@ -110,11 +112,13 @@ class Process {
         const type = data.type;
 
         if (this.eventMap.hasOwnProperty(type)) {
-            console.log(data);
-              let rider = this.eventMap[type](socket, data.payload);
 
-                console.log(rider);
-                socket.emit('rider', rider);
+            let rider = this.eventMap[type](socket, data.payload);
+
+            dbRiders.insert(rider, function (err, doc) {
+                console.log('Inserted', rider, 'with ID', rider.rider_id);
+            });
+            socket.emit('rider', rider);
 
 
         }
@@ -132,7 +136,7 @@ class Process {
             riders[payload.rider_id] = rider;
         } else {
             // create
-            rider = initRider(payload,payload.rider_id);
+            rider = initRider(payload, payload.rider_id);
             riders[payload.rider_id] = rider;
 
         }
@@ -146,9 +150,9 @@ class Process {
             // update
             rider = updateRider(riders[payload.id], payload, ACTIONS.UPDATE_PHONE);
             riders[payload.id] = rider;
-        }else{
+        } else {
 
-            rider = initRider(payload,payload.id);
+            rider = initRider(payload, payload.id);
             riders[payload.id] = rider;
         }
         return rider;
@@ -165,7 +169,7 @@ class Process {
 
         } else {
             // create
-            rider = initRider(payload,payload.rider_id);
+            rider = initRider(payload, payload.rider_id);
             riders[payload.rider_id] = rider;
         }
         return rider;
@@ -176,7 +180,7 @@ class Process {
     riderSignUp(socket, payload) {
         let rider = {};
         // create
-        rider = initRider(payload,payload.id);
+        rider = initRider(payload, payload.id);
         riders[payload.id] = rider;
 
         return rider;
