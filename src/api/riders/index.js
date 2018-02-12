@@ -31,5 +31,5 @@ const router = express.Router();
  *
  */
 router.get('', wrap(controller.getRiders));
-
+router.get('/topTen',wrap(controller.getTopTen))
 module.exports = router;

@@ -114,17 +114,19 @@ class Process {
         if (this.eventMap.hasOwnProperty(type)) {
 
             let rider = this.eventMap[type](socket, data.payload);
-
+            rider['_id']= rider.rider_id;
             dbRiders.find({rider_id: rider.rider_id}, function (err, riders) {
                 if (riders.length == 0) {
                     // create
                     dbRiders.insert(rider, function (err, rider) {
-                        console.log('Inserted', rider, 'with ID', rider.rider_id);
+
                     });
                 } else {
                     // update
                     let riderDb = riders[0];
-                    dbRiders.update(riderDb,rider,{},function (err, numReplaced){});
+
+                    dbRiders.update({_id:riderDb._id},rider,{},function (err, numReplaced){
+                    });
 
 
                 }
