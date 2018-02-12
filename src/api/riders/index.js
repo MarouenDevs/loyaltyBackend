@@ -32,4 +32,5 @@ const router = express.Router();
  */
 router.get('', wrap(controller.getRiders));
 router.get('/topTen',wrap(controller.getTopTen))
+router.get('/stats/:state',wrap(controller.getStats))
 module.exports = router;
