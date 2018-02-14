@@ -10,7 +10,12 @@ const rideProcess = new Process();
 class Consumer {
 
     constructor() {
-
+        this.routingKeys = [
+            'rider.signup',
+            'rider.phone_update',
+            'ride.create',
+            'ride.completed'
+        ];
     }
 
 
@@ -29,10 +34,16 @@ class Consumer {
     }
 
     consume(conn, socket, cb) {
-
+        let self = this;
         conn.createChannel(function (err, ch) {
             var q = 'riders';
             ch.assertQueue(q, {durable: false});
+
+            self.routingKeys.forEach((key)=>{
+                ch.bindQueue(q, 'events', key);
+            });
+
+
             console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
 
             ch.consume(q, function (data) {
